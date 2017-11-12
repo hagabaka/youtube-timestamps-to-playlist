@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+
+<head>
+  <script src='common.js'></script>
+  <script src='popup.js'></script>
+  <style>
+    #playlist-tracks {
+      width: 20em;
+    }
+    playlist-track:not(:last-child) {
+      border-bottom: 1px solid lightgray;
+    }
+  </style>
+</head>
+
+<body>
+  <div id='playlist-tracks'></div>
+</body>
+
+<template id='playlist-track'>
+  <div class='track'>
+    <style>
+    :host {
+      display: block;
+    }
+    :host #text {
+      cursor: pointer;
+    }
+    :host([playing]) {
+      font-weight: bold;
+      cursor: default;
+    }
+    :host #progress {
+      display: block;
+      width: 100%;
+    }
+    :host(:not([playing])) #progress {
+      display: none;
+    }
+    </style>
+    <div id='text'></div>
+    <input type='range' id='progress' min='0' max='1' step='any'></input>
+  </div>
+</template>
+
+</html>

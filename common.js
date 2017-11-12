@@ -1,0 +1,10 @@
+TYPE = 'type';
+CONTENT = 'content';
+PLAYLISTS = 'playlists';
+PLAYING = 'playing';
+PROGRESS = 'progress';
+INITIALIZE = 'initialize';
+UPDATE = 'update';
+SEEK = 'seek';
+SUBSCRIBE = 'subscribe';
+TIME = 'time';

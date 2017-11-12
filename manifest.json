@@ -1,0 +1,26 @@
+{
+  "manifest_version": 2,
+
+  "name": "YouTube Timestamps to Playlist",
+  "description": "This extension creates a playlist from time tags on a YouTube page",
+  "version": "1.0",
+
+  "background": {
+    "scripts": ["common.js", "background.js"]
+  },
+
+  "page_action": {
+    "default_title": "Playlist",
+    "default_popup": "popup.html"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["*://*.youtube.com/watch*"],
+      "js": ["common.js", "content-script.js"]
+    }
+  ],
+
+  "permissions": [
+  ]
+}
