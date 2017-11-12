@@ -8,3 +8,4 @@ Known bugs
 
 Planned features
 * Display notification when playing track changes
+* Allow rescanning page for time tags on demand
