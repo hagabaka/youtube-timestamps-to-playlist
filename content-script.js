@@ -1,4 +1,29 @@
-setTimeout(function() {
+let observerOptions = {
+  childList: true,
+  subTree: true,
+  characterData: true,
+};
+let documentMutationObserver = new MutationObserver((_, observer) => {
+  let description = document.querySelector('#description');
+  let comments = document.querySelector('#comments');
+  let mutationObserver;
+  if(description && comments) {
+    buildPlaylist();
+    mutationObserver = new MutationObserver(buildPlaylist);
+    mutationObserver.observe(document.querySelector('#description'), observerOptions);
+    mutationObserver.observe(document.querySelector('#comments'), observerOptions);
+  } else {
+    if(mutationObserver) {
+      mutationObserver.disconnect();
+    }
+  }
+});
+documentMutationObserver.observe(document.querySelector('body'), observerOptions);
+
+let oldPlaylistJson = '[]';
+let timeUpdateListener;
+let video;
+function buildPlaylist() {
   let match = location.search.match(/(?:^\?|&)v=([^&]+)(?=&|$)/);
   if(match) {
     let id = match[1];
@@ -19,20 +44,29 @@ setTimeout(function() {
         tracks.push({
           href: link.href,
           text:
-            getLine(link.previousSibling.textContent, -1) +
+            getLine(link.previousSibling, -1) +
             link.textContent +
-            getLine(link.nextSibling.textContent, 0),
+            getLine(link.nextSibling, 0),
           startTime
         });
       }
     }
-    chrome.runtime.sendMessage({
-      [TYPE]: INITIALIZE,
-      [PLAYLISTS]: Array.from(containers.values()),
-    });
+    let playlist = Array.from(containers.values());
+    let newPlaylistJson = JSON.stringify(playlist);
+    if(newPlaylistJson !== oldPlaylistJson) {
+      chrome.runtime.sendMessage({
+        [TYPE]: INITIALIZE,
+        [PLAYLISTS]: playlist,
+      });
+      oldPlaylistJson = newPlaylistJson;
+    }
 
-    let video = document.querySelector('video');
-    video.addEventListener('timeupdate', () => {
+    if(timeUpdateListener) {
+      video.removeEventListener('timeupdate', timeUpdateListener);
+    }
+    video = document.querySelector('video');
+
+    timeUpdateListener = () => {
       for(let [container, tracks] of containers) {
         for(let [index, track] of tracks.entries()) {
           if(track.startTime <= video.currentTime && video.currentTime < track.endTime) {
@@ -45,7 +79,8 @@ setTimeout(function() {
           }
         }
       }
-    });
+    };
+    video.addEventListener('timeupdate', timeUpdateListener);
 
     chrome.runtime.onMessage.addListener((message) => {
       if(message[TYPE] === SEEK) {
@@ -53,9 +88,13 @@ setTimeout(function() {
       }
     });
   }
-}, 1000);
+}
 
-function getLine(string, index) {
+function getLine(node, index) {
+  if(!node) {
+    return '';
+  }
+  let string = node.textContent;
   let lines = string.split(/[\n\r]/g);
   if(index < 0) {
     index += lines.length;
