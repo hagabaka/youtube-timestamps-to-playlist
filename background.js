@@ -10,6 +10,7 @@ chrome.runtime.onConnect.addListener((port) => {
 });
 
 chrome.runtime.onMessage.addListener((message, sender) => {
+  let notificationText;
   if(message[TYPE] === INITIALIZE) {
     if(message[PLAYLISTS].length > 0) {
       chrome.pageAction.show(sender.tab.id);
@@ -18,12 +19,15 @@ chrome.runtime.onMessage.addListener((message, sender) => {
     }
     initialMessage = message;
   } else if(message[TYPE] === NOTIFY) {
-    chrome.notifications.create({
-      type: 'basic',
-      title: 'Now playing',
-      message: message[PLAYING],
-      iconUrl: 'icon.png'
-    });
+    if(notificationText !== message[PLAYING]) {
+      notificationText = message[PLAYING];
+      chrome.notifications.create({
+        type: 'basic',
+        title: 'Now playing',
+        message: message[PLAYING],
+        iconUrl: 'icon.png'
+      });
+    }
   } else {
     for(let port of connectedPorts) {
       port.postMessage(message);
