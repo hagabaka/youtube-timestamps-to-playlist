@@ -11,7 +11,11 @@ chrome.runtime.onConnect.addListener((port) => {
 
 chrome.runtime.onMessage.addListener((message, sender) => {
   if(message[TYPE] === INITIALIZE) {
-    chrome.pageAction.show(sender.tab.id);
+    if(message[PLAYLISTS].length > 0) {
+      chrome.pageAction.show(sender.tab.id);
+    } else {
+      chrome.pageAction.hide(sender.tab.id);
+    }
     initialMessage = message;
   } else {
     for(let port of connectedPorts) {
