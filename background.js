@@ -17,6 +17,13 @@ chrome.runtime.onMessage.addListener((message, sender) => {
       chrome.pageAction.hide(sender.tab.id);
     }
     initialMessage = message;
+  } else if(message[TYPE] === NOTIFY) {
+    chrome.notifications.create({
+      type: 'basic',
+      title: 'Now playing',
+      message: message[PLAYING],
+      iconUrl: 'icon.png'
+    });
   } else {
     for(let port of connectedPorts) {
       port.postMessage(message);
