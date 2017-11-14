@@ -46,6 +46,13 @@ port.onMessage.addListener((message) => {
         track.removeAttribute('playing');
       }
     }
+  } else if(message[TYPE] === NOTIFY) {
+    chrome.notifications.create({
+      type: 'basic',
+      title: 'Now playing',
+      message: message[PLAYING],
+      iconUrl: 'icon.png'
+    });
   }
 });
 

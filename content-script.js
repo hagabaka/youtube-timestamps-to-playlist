@@ -23,6 +23,7 @@ documentMutationObserver.observe(document.querySelector('body'), observerOptions
 let oldPlaylistJson = '[]';
 let timeUpdateListener;
 let video;
+let playingTrack;
 function buildPlaylist() {
   let match = location.search.match(/(?:^\?|&)v=([^&]+)(?=&|$)/);
   if(match) {
@@ -75,6 +76,13 @@ function buildPlaylist() {
               [PLAYING]: index,
               [PROGRESS]: (video.currentTime - track.startTime) / (track.endTime - track.startTime),
             });
+            if(playingTrack !== track) {
+              playingTrack = track;
+              chrome.runtime.sendMessage({
+                [TYPE]: NOTIFY,
+                [PLAYING]: track.text,
+              });
+            }
             break;
           }
         }

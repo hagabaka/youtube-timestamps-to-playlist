@@ -5,6 +5,7 @@ PLAYING = 'playing';
 PROGRESS = 'progress';
 INITIALIZE = 'initialize';
 UPDATE = 'update';
+NOTIFY = 'notify';
 SEEK = 'seek';
 SUBSCRIBE = 'subscribe';
 TIME = 'time';
