@@ -24,13 +24,12 @@ chrome.runtime.onMessage.addListener((message, sender) => {
       chrome.notifications.create({
         type: 'basic',
         title: 'Now playing',
-        message: message[PLAYING],
+        message: message[PLAYING] + '\n' + message[VIDEO],
         iconUrl: 'icon.png'
       });
     }
-  } else {
-    for(let port of connectedPorts) {
-      port.postMessage(message);
-    }
+  }
+  for(let port of connectedPorts) {
+    port.postMessage(message);
   }
 });

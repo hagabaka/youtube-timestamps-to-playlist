@@ -68,23 +68,29 @@ function buildPlaylist() {
     video = document.querySelector('video');
 
     timeUpdateListener = () => {
+      let bestTracks = [];
       for(let [container, tracks] of containers) {
-        for(let [index, track] of tracks.entries()) {
-          if(track.startTime <= video.currentTime && video.currentTime < track.endTime) {
+        if(tracks.length > bestTracks.length) {
+          bestTracks = tracks;
+        }
+      }
+
+      for(let [index, track] of bestTracks.entries()) {
+        if(track.startTime <= video.currentTime && video.currentTime < track.endTime) {
+          chrome.runtime.sendMessage({
+            [TYPE]: UPDATE,
+            [PLAYING]: index,
+            [PROGRESS]: (video.currentTime - track.startTime) / (track.endTime - track.startTime),
+          });
+          if(playingTrack !== track) {
+            playingTrack = track;
             chrome.runtime.sendMessage({
-              [TYPE]: UPDATE,
-              [PLAYING]: index,
-              [PROGRESS]: (video.currentTime - track.startTime) / (track.endTime - track.startTime),
+              [TYPE]: NOTIFY,
+              [PLAYING]: track.text,
+              [VIDEO]: document.querySelector('.title').textContent,
             });
-            if(playingTrack !== track) {
-              playingTrack = track;
-              chrome.runtime.sendMessage({
-                [TYPE]: NOTIFY,
-                [PLAYING]: track.text,
-              });
-            }
-            break;
           }
+          break;
         }
       }
     };

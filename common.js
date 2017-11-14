@@ -9,3 +9,4 @@ NOTIFY = 'notify';
 SEEK = 'seek';
 SUBSCRIBE = 'subscribe';
 TIME = 'time';
+VIDEO = 'video';
