@@ -9,8 +9,8 @@ chrome.runtime.onConnect.addListener((port) => {
   });
 });
 
+let notificationText;
 chrome.runtime.onMessage.addListener((message, sender) => {
-  let notificationText;
   if(message[TYPE] === INITIALIZE) {
     if(message[PLAYLISTS].length > 0) {
       chrome.pageAction.show(sender.tab.id);
