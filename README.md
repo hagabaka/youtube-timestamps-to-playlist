@@ -8,5 +8,4 @@ Known bugs
 * Multiple time tags on the same line (e.g. 0:00 - 0:31 Track 1) are not handled correctly
 
 Planned features
-* Display notification when playing track changes
 * Allow rescanning page for time tags on demand
