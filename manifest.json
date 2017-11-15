@@ -18,7 +18,7 @@
   "content_scripts": [
     {
       "matches": ["*://*.youtube.com/watch*"],
-      "js": ["mutation-summary.js", "common.js", "content-script.js"]
+      "js": ["common.js", "content-script.js"]
     }
   ],
 

@@ -11,3 +11,6 @@ SUBSCRIBE = 'subscribe';
 TIME = 'time';
 VIDEO = 'video';
 CONTENT_SCRIPT = 'content_script';
+TRACK = 'track';
+PLAYLIST_INDEX = 'playlist_index';
+TRACK_INDEX = 'track_index';

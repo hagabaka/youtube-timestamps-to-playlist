@@ -1,6 +1,7 @@
 class PlaylistTrack extends HTMLElement {
   constructor(track) {
     super();
+    this.data = track;
     let template = document.querySelector('#playlist-track');
     let text = template.content.querySelector('#text');
     text.textContent = track.text;
@@ -27,25 +28,33 @@ customElements.define('playlist-track', PlaylistTrack);
 
 let port = chrome.runtime.connect();
 port.onMessage.addListener((message) => {
-  let tracks = document.querySelector('#playlist-tracks');
+  let container = document.querySelector('#playlist-tracks');
   if(message[TYPE] === INITIALIZE) {
-    while (tracks.hasChildNodes()) {
-      tracks.removeChild(tracks.lastChild);
+    while (container.hasChildNodes()) {
+      container.removeChild(container.lastChild);
     }
     for(let playlist of message[PLAYLISTS]) {
+      let playlistNode = document.createElement('div');
+      playlistNode.classList.add('playlist');
+      container.appendChild(playlistNode);
       for(let track of playlist) {
-        tracks.appendChild(new PlaylistTrack(track));
+        playlistNode.appendChild(new PlaylistTrack(track));
       }
     }
   } else if(message[TYPE] === UPDATE) {
-    for(let [index, track] of tracks.childNodes.entries()) {
-      if(index === message[PLAYING]) {
-        track.setAttribute('playing', 'playing');
-        track.setAttribute('progress', message[PROGRESS]);
-      } else {
-        track.removeAttribute('playing');
-      }
-    }
+    let playingNodes = new Set(message[PLAYING].map((playing) => {
+      let trackNode = container.childNodes[playing[PLAYLIST_INDEX]].childNodes[playing[TRACK_INDEX]];
+      trackNode.setAttribute('playing', 'playing');
+      trackNode.setAttribute('progress', playing[PROGRESS]);
+      return trackNode;
+    }));
+    container.childNodes.forEach((playlistNode) => {
+      playlistNode.childNodes.forEach((trackNode) => {
+        if(!playingNodes.has(trackNode)) {
+          trackNode.removeAttribute('playing');
+        }
+      });
+    });
   }
 });
 

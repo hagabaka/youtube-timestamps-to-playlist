@@ -16,7 +16,7 @@ let port = chrome.runtime.connect({name: CONTENT_SCRIPT});
 let oldPlaylistJson = '[]';
 let timeUpdateListener;
 let video;
-let playingTrack;
+let notifiedTrack;
 function buildPlaylist(links) {
   let containers = new Map();
   for(let link of links) {
@@ -34,20 +34,17 @@ function buildPlaylist(links) {
       }
       tracks.push({
         href: link.href,
-        text:
-        getLine(link.previousSibling, -1) +
-        link.textContent +
-        getLine(link.nextSibling, 0),
+        text: getLine(link.previousSibling, -1) + link.textContent + getLine(link.nextSibling, 0),
         startTime
       });
     }
   }
-  let playlist = Array.from(containers.values());
-  let newPlaylistJson = JSON.stringify(playlist);
+  let playlists = Array.from(containers.values());
+  let newPlaylistJson = JSON.stringify(playlists);
   if(newPlaylistJson !== oldPlaylistJson) {
     port.postMessage({
       [TYPE]: INITIALIZE,
-      [PLAYLISTS]: playlist,
+      [PLAYLISTS]: playlists,
     });
     oldPlaylistJson = newPlaylistJson;
   }
@@ -58,29 +55,32 @@ function buildPlaylist(links) {
   video = document.querySelector('video');
 
   timeUpdateListener = () => {
-    let bestTracks = [];
-    for(let [container, tracks] of containers) {
-      if(tracks.length > bestTracks.length) {
-        bestTracks = tracks;
-      }
-    }
-
-    for(let [index, track] of bestTracks.entries()) {
-      if(track.startTime <= video.currentTime && video.currentTime < track.endTime) {
-        port.postMessage({
-          [TYPE]: UPDATE,
-          [PLAYING]: index,
-          [PROGRESS]: (video.currentTime - track.startTime) / (track.endTime - track.startTime),
-        });
-        if(playingTrack !== track) {
-          playingTrack = track;
-          port.postMessage({
-            [TYPE]: NOTIFY,
-            [PLAYING]: track.text,
-            [VIDEO]: document.querySelector('.title').textContent,
+    let currentTracks = [];
+    for(let [playlistIndex, playlist] of playlists.entries()) {
+      for(let [trackIndex, track] of playlist.entries()) {
+        if(track.startTime <= video.currentTime && video.currentTime < track.endTime) {
+          currentTracks.push({
+            [PLAYLIST_INDEX]: playlistIndex,
+            [TRACK_INDEX]: trackIndex,
+            [TRACK]: track,
+            [PROGRESS]: (video.currentTime - track.startTime) / (track.endTime - track.startTime),
           });
         }
-        break;
+      }
+    }
+    port.postMessage({
+      [TYPE]: UPDATE,
+      [PLAYING]: currentTracks,
+    });
+    if(currentTracks.length > 0) {
+      let notifyTrack = currentTracks[0][TRACK];
+      if(notifiedTrack !== notifyTrack) {
+        notifiedTrack = notifyTrack;
+        port.postMessage({
+          [TYPE]: NOTIFY,
+          [PLAYING]: notifyTrack.text,
+          [VIDEO]: document.querySelector('.title').textContent,
+        });
       }
     }
   };
