@@ -27,6 +27,7 @@ class PlaylistTrack extends HTMLElement {
 customElements.define('playlist-track', PlaylistTrack);
 
 let port = chrome.runtime.connect();
+let scrolled = false;
 port.onMessage.addListener((message) => {
   let container = document.querySelector('#playlist-tracks');
   if(message[TYPE] === INITIALIZE) {
@@ -42,12 +43,16 @@ port.onMessage.addListener((message) => {
       }
     }
   } else if(message[TYPE] === UPDATE) {
-    let playingNodes = new Set(message[PLAYING].map((playing) => {
-      let trackNode = container.childNodes[playing[PLAYLIST_INDEX]].childNodes[playing[TRACK_INDEX]];
-      trackNode.setAttribute('playing', 'playing');
-      trackNode.setAttribute('progress', playing[PROGRESS]);
-      return trackNode;
-    }));
+    let playingNodes = new Set();
+    message[PLAYING].forEach((playing) => {
+      let playlistNode = container.childNodes[playing[PLAYLIST_INDEX]];
+      if(playlistNode) {
+        let trackNode = playlistNode.childNodes[playing[TRACK_INDEX]];
+        playingNodes.add(trackNode);
+        trackNode.setAttribute('playing', 'playing');
+        trackNode.setAttribute('progress', playing[PROGRESS]);
+      }
+    });
     container.childNodes.forEach((playlistNode) => {
       playlistNode.childNodes.forEach((trackNode) => {
         if(!playingNodes.has(trackNode)) {
@@ -55,6 +60,10 @@ port.onMessage.addListener((message) => {
         }
       });
     });
+    if(!scrolled && playingNodes.size > 0) {
+      scrolled = true;
+      playingNodes.values().next().value.scrollIntoView({behavior: 'smooth'});
+    }
   }
 });
 
