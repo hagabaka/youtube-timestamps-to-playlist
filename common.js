@@ -10,3 +10,4 @@ SEEK = 'seek';
 SUBSCRIBE = 'subscribe';
 TIME = 'time';
 VIDEO = 'video';
+CONTENT_SCRIPT = 'content_script';

@@ -20,6 +20,7 @@ let documentMutationObserver = new MutationObserver((_, observer) => {
 });
 documentMutationObserver.observe(document.querySelector('body'), observerOptions);
 
+let port = chrome.runtime.connect({name: CONTENT_SCRIPT});
 let oldPlaylistJson = '[]';
 let timeUpdateListener;
 let video;
@@ -55,7 +56,7 @@ function buildPlaylist() {
     let playlist = Array.from(containers.values());
     let newPlaylistJson = JSON.stringify(playlist);
     if(newPlaylistJson !== oldPlaylistJson) {
-      chrome.runtime.sendMessage({
+      port.postMessage({
         [TYPE]: INITIALIZE,
         [PLAYLISTS]: playlist,
       });
@@ -77,14 +78,14 @@ function buildPlaylist() {
 
       for(let [index, track] of bestTracks.entries()) {
         if(track.startTime <= video.currentTime && video.currentTime < track.endTime) {
-          chrome.runtime.sendMessage({
+          port.postMessage({
             [TYPE]: UPDATE,
             [PLAYING]: index,
             [PROGRESS]: (video.currentTime - track.startTime) / (track.endTime - track.startTime),
           });
           if(playingTrack !== track) {
             playingTrack = track;
-            chrome.runtime.sendMessage({
+            port.postMessage({
               [TYPE]: NOTIFY,
               [PLAYING]: track.text,
               [VIDEO]: document.querySelector('.title').textContent,
@@ -96,7 +97,7 @@ function buildPlaylist() {
     };
     video.addEventListener('timeupdate', timeUpdateListener);
 
-    chrome.runtime.onMessage.addListener((message) => {
+    port.onMessage.addListener((message) => {
       if(message[TYPE] === SEEK) {
         video.currentTime = message[TIME];
       }

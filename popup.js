@@ -50,13 +50,8 @@ port.onMessage.addListener((message) => {
 });
 
 function requestSeek(time) {
-  chrome.tabs.query({
-    active: true,
-    currentWindow: true,
-  }, (tabs) => {
-    chrome.tabs.sendMessage(tabs[0].id, {
-      [TYPE]: SEEK,
-      [TIME]: time,
-    });
+  port.postMessage({
+    [TYPE]: SEEK,
+    [TIME]: time,
   });
 }
