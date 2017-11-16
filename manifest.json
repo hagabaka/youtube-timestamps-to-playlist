@@ -5,12 +5,17 @@
   "description": "This extension creates a playlist from time tags on a YouTube page",
   "version": "1.0",
 
+  "icons": {
+    "128": "icon128.png",
+    "48": "icon48.png"
+  },
+
   "background": {
     "scripts": ["common.js", "background.js"]
   },
 
   "page_action": {
-    "default_icon": "icon.png",
+    "default_icon": "icon48.png",
     "default_title": "Playlist",
     "default_popup": "popup.html"
   },

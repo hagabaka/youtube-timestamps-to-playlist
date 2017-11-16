@@ -44,7 +44,7 @@ class TabManager {
             type: 'basic',
             title: 'Now playing',
             message: message[PLAYING] + '\n' + message[VIDEO],
-            iconUrl: 'icon.png'
+            iconUrl: 'icon48.png'
           });
         }
       } else {
