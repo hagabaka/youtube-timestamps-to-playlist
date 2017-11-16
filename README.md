@@ -2,7 +2,7 @@
 
 Chrome extension which creates a playlist from time tags on a YouTube page
 
-[!screenshot](screenshot.png)
+![screenshot](screenshot.png)
 
 When viewing a video on YouTube containing multiple songs, this extension looks
 for a list of "time tags", for example "0:40 Symphony No. 5 in C Minor",
