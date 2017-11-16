@@ -12,7 +12,7 @@ notification when a new song starts playing.
 
 ## Install
 
-For the stable release, install from the [Chrome Web Store](https://chrome.google.com/webstore/developer/edit/jmjgdfollcmomdjljhjkcenehcgbiogm)
+For the stable release, install from the [Chrome Web Store](https://chrome.google.com/webstore/detail/youtube-timestamps-to-pla/jmjgdfollcmomdjljhjkcenehcgbiogm)
 
 To test the latest changes, turn on Developer Mode in the Chrome extensions page,
 selecte Load Unpacked, and select the directory containing these files.
