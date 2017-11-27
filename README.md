@@ -1,6 +1,6 @@
 # Youtube Timestamps to Playlist
 
-Chrome extension which creates a playlist from time tags on a YouTube page
+Chrome and Firefox extension which creates a playlist from time tags on a YouTube page
 
 ![screenshot](screenshot.png)
 
@@ -13,6 +13,7 @@ notification when a new song starts playing.
 ## Install
 
 For the stable release, install from the [Chrome Web Store](https://chrome.google.com/webstore/detail/youtube-timestamps-to-pla/jmjgdfollcmomdjljhjkcenehcgbiogm)
+or [Firefox Addons](https://addons.mozilla.org/en-US/firefox/addon/youtube-timestamps-to-playlist/)
 
 To test the latest changes, turn on Developer Mode in the Chrome extensions page,
 selecte Load Unpacked, and select the directory containing these files.
