@@ -2,6 +2,7 @@
 <html>
 
 <head>
+  <script src='webcomponents-hi-sd-ce.js'></script>
   <script src='common.js'></script>
   <script src='popup.js'></script>
   <style>
@@ -16,6 +17,26 @@
 
 <body>
   <div id='playlist-tracks'></div>
+  <!-- these style rules only necessary due to incomplete polyfills -->
+  <style>
+    playlist-track {
+      display: block;
+    }
+    playlist-track #text {
+      cursor: pointer;
+    }
+    playlist-track[playing] {
+      font-weight: bold;
+      cursor: default;
+    }
+    playlist-track #progress {
+      display: none;
+    }
+    playlist-track[playing] #progress {
+      display: block;
+      width: 100%;
+    }
+  </style>
 </body>
 
 <template id='playlist-track'>
@@ -32,11 +53,11 @@
       cursor: default;
     }
     :host #progress {
+      display: none;
+    }
+    :host([playing]) #progress {
       display: block;
       width: 100%;
-    }
-    :host(:not([playing])) #progress {
-      display: none;
     }
     </style>
     <div id='text'></div>
